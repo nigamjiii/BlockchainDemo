@@ -9,9 +9,17 @@ app.use(express.json())
 
 app.post('/block',async(req,res)=>{
     try{
-        let data=req.body.data;
+        var newBlock={
+            "blockNo":blockchain.length+1,
+            "data":req.body.data,
+            "blockHash":"",
+            "prevHash":blockchain[blockchain.length-1].blockHash,
+            "nounce":0
+        }
+        var value=generateHash(JSON.stringify(newBlock))
 
-        const newBlock=generateHash(data,(blockchain.length+1))
+        newBlock.blockHash=value.hash;
+        newBlock.nounce=value.nounce;
 
         const buffer=fs.readFileSync('blockchain.json', 'utf8')
         const parseData=JSON.parse(buffer)
